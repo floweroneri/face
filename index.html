@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>image</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <!-- p5.js 라이브러리 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body::-webkit-scrollbar { display: none;}
+</style>
+<body>
+  <script>
+    let vid;
+    let scl = 10;
+    let w, h;
+
+    function setup() {
+      // 캔버스 크기 설정
+      resizeCanvasToWindow();
+      // 비디오 캡처 시작
+      vid = createCapture(VIDEO);
+      vid.size(w, h);
+      vid.hide(); // 비디오 캡처 숨기기
+    }
+
+    function draw() {
+      background(220);
+      vid.loadPixels();
+
+      // 캡처된 비디오의 각 픽셀을 가져와서 시각화
+      for (let i = 0; i < vid.width; i++) {
+        for (let j = 0; j < vid.height; j++) {
+          let index = (j * vid.width + i) * 4;
+          let r = vid.pixels[index + 0];
+          let g = vid.pixels[index + 1];
+          let b = vid.pixels[index + 2];
+          
+          let c = (r + g + b) / 3; // 밝기 계산
+          let s = map(c, 0, 100, 0, 20); // 밝기를 크기로 변환
+          
+          fill(140, 100, b); // 색상 설정
+          noStroke();
+          ellipse(scl / 2 + i * scl, scl / 2 + j * scl, s, s); // 원을 그리기
+        }
+      }
+    }
+
+    function resizeCanvasToWindow() {
+      w = floor(windowWidth / scl);
+      h = floor(windowHeight / scl);
+      createCanvas(w * scl, h * scl);
+    }
+
+    function windowResized() {
+      resizeCanvasToWindow();
+      vid.size(w, h);
+    }
+  </script>
+</body>
+</html>
